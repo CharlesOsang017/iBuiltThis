@@ -6,27 +6,6 @@ import { getRecentlyLaunchedProducts } from '@/lib/products/product-select';
 
 const RecentlyLaunchedProducts = async() => {
   const recentlyLaunchedProducts = await getRecentlyLaunchedProducts();
-    // const recentlyLaunchedProducts = [
-    //   {
-    //     id: 1,
-    //     name: "ParityKit",
-    //     description: "A toolkit for creating parity products",
-    //     tags: ["Saas", "Pricing", "Global"],
-    //     votes: 123,
-    //     isFeatured: true,
-    //     link: "https://paritykit.com",
-    //   },
-    //   {
-    //     id: 2,
-    //     name: "Modern Full Stack Next.js Course",
-    //     description:
-    //       "Learn to build production-ready full stack apps with Next.js",
-    //     tags: ["Next.js", "Full-Stack", "Course"],
-    //     votes: 624,
-    //     isFeatured: false,
-    //     link: "https://ibulithis.com",
-    //   },
-    // ];
   return (
     <section className="py-20">
       <div className="wrapper space-y-8">

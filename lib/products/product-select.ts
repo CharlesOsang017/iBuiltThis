@@ -14,8 +14,7 @@ export const getFeaturedProducts = async () => {
   return productsData;
 };
 
-export const getAllProducts = async () => {
-    "use cache"
+export const getAllAprovedProducts = async () => {
   const productsData = await db
     .select()
     .from(products)
@@ -25,12 +24,16 @@ export const getAllProducts = async () => {
   return productsData;
 };
 
+export const getAllProducts = async()=>{
+  "use cache"
+  const productsData = await db.select().from(products).orderBy(desc(products.voteCount))
+  return productsData
+}
+
 
 export const getRecentlyLaunchedProducts = async () => {
-    await connection()
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+  await connection()   
   const productsData = await getAllProducts();
-
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 

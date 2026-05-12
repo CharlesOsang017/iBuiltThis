@@ -7,17 +7,39 @@ import { ProductType } from "@/types";
 import { useMemo, useState } from "react";
 
 const ProductExplorer = ({ products }: { products: ProductType[] }) => {
+  const [sortBy, setSortBy] = useState<'trending' | 'recent' | 'newest'>("trending");
   const [searchQuery, setSearchQuery] = useState("");
 
 
 const filteredProducts = useMemo(()=>{
+  const filtered = [...products]
     if (searchQuery.length > 0) {
-        return products.filter((product) =>
+        return filtered.filter((product) =>
             product.name.toLowerCase().includes(searchQuery.toLowerCase()),
         );
     } 
-    return products;
-}, [searchQuery, products]);
+     switch (sortBy) {
+       case "trending":
+         return filtered.sort((a, b) => b.voteCount - a.voteCount);
+       case "recent":
+         return filtered.sort(
+           (a, b) =>
+             new Date(b.createdAt || "").getTime() -
+             new Date(a.createdAt || "").getTime(),
+         );
+       case "newest":
+         return filtered.sort(
+           (a, b) =>
+             new Date(b.createdAt || "").getTime() -
+             new Date(a.createdAt || "").getTime(),
+         );
+       default:
+         return filtered;
+     }
+   
+}, [searchQuery, sortBy, products]);
+
+ 
     
   return (
     <div>
@@ -32,12 +54,12 @@ const filteredProducts = useMemo(()=>{
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
+        <div className="flex gap-2 cursor-pointer">
+          <Button variant={sortBy==='trending'?'default':'outline'} onClick={()=>setSortBy('trending')}>
             <TrendingUpIcon className="size-4" />
             Trending
           </Button>
-          <Button>
+          <Button variant={sortBy==='recent'?'default':'outline'} onClick={()=>setSortBy('recent')}>
             <Clock1Icon className="size-4" />
             Recent
           </Button>
