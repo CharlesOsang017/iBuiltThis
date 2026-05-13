@@ -16,14 +16,14 @@ export const addProductAction = async (prevState: FormState,formData: FormData):
         const user = await currentUser()
         const userEmail = user?.emailAddresses[0].emailAddress || "anonymous"
 
-        if(!userId){
+        if(!userId){           
             return {
                 success: false,
                 message: "You must be logged in to add a product.",
             } as FormState
         }
 
-        if(!orgId){
+        if(!orgId){            
             return {
                 success: false,
                 message: "You must be a member of an organization to add a product.",
@@ -33,12 +33,11 @@ export const addProductAction = async (prevState: FormState,formData: FormData):
 
 
         // data
+    const rawFormData = Object.fromEntries(formData.entries());
+    // validate the data
+    const validatedData = productSchema.safeParse(rawFormData);
 
-        const rawFormData = Object.fromEntries(formData.entries());
-// validate the data
-const validatedData = productSchema.safeParse(rawFormData);
-
-if(!validatedData.success){
+    if(!validatedData.success){
     return {
         success: false,
         message: "Please fix the errors below.",
@@ -48,6 +47,16 @@ if(!validatedData.success){
 
   const {name,slug,tagline,websiteUrl,tags,description} = validatedData.data
   const tagsArray = tags ? tags.filter((tag: any)=> typeof tag === "string") : []
+  // Check if slug already exists before inserting
+  const existing = await db.select({ id: products.id }).from(products).where(eq(products.slug, slug)).limit(1)
+  if (existing.length > 0) {
+    return {
+      success: false,
+      message: "A product with this slug already exists. Please choose a different slug.",
+      errors: { slug: ["This slug is already taken."] },
+    } as FormState
+  }
+
   await db.insert(products).values({
     name,
     slug,
@@ -59,39 +68,39 @@ if(!validatedData.success){
     userId,
     status: "pending",
     organizationId: orgId,
-    
   })
 
-//   refresh()
-revalidatePath("/")
+  // refresh()
+    revalidatePath("/")
 
   return {
     success: true,
     message: "Product added successfully! It will be reviewed shortly.",
   }
 
-
-
-
 // database operations
-
-
-
-     }catch(error){
-        console.log(error)
-        if (error instanceof  z.ZodError){
+     }catch(error: any){
+        console.error("addProductAction error:", error)
+        if (error instanceof z.ZodError){
             return {
                 success: false,
-                message: "Failed to submit product",
+                message: "Please fix the validation errors below.",
                 errors: error.flatten().fieldErrors,
             } 
+        }
+        // PostgreSQL unique constraint violation
+        if (error?.code === "23505" || error?.message?.includes("unique") || error?.message?.includes("duplicate")) {
+            return {
+                success: false,
+                message: "A product with this slug already exists. Please choose a different slug.",
+                errors: { slug: ["This slug is already taken."] },
+            }
         }
         return {
             success: false,
             message: "An error occurred. Please try again.",
         }
     }
-
     
 }
 

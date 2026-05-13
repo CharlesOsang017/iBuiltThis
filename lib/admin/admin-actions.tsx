@@ -7,8 +7,6 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export const approveProductAction = async (productId: ProductType["id"]) => {
-  console.log("Approve product", productId);
-
   try {
     await db
       .update(products)
@@ -16,13 +14,12 @@ export const approveProductAction = async (productId: ProductType["id"]) => {
       .where(eq(products.id, productId));
 
     revalidatePath("/admin");
-
+    
     return {
       success: true,
       message: "Product approved successfully",
     };
-  } catch (error) {
-    console.error(error);
+  } catch (error) { 
     return {
       success: false,
       message: "Failed to approve product",
@@ -31,7 +28,6 @@ export const approveProductAction = async (productId: ProductType["id"]) => {
 };
 
 export const rejectProductAction = async (productId: ProductType["id"]) => {
-  console.log("Reject product", productId);
   try {
     await db
       .update(products)

@@ -1,4 +1,6 @@
+import { Loader } from "lucide-react";
 import { Suspense } from "react";
+import { Toaster } from "sonner";
 
 export default function AdminLayout({
   children,
@@ -6,8 +8,17 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <Suspense fallback={<div>Loading Admin...</div>}>{children}</Suspense>
-    </div>
+    <>
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center min-h-screen">
+            <Loader className="animate-spin size-8 text-primary" />
+          </div>
+        }
+      >
+        {children}
+      </Suspense>
+      <Toaster />
+    </>
   );
 }

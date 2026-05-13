@@ -12,12 +12,10 @@ export default function AdminActions({
   status: string;
   productId: ProductType["id"];
 }) {
-  const handleApprove = async () => {
-    console.log("Approve");
+  const handleApprove = async () => {   
     await approveProductAction(productId);
   };
   const handleReject = async () => {
-    console.log("Reject");
     await rejectProductAction(productId);
 
   };

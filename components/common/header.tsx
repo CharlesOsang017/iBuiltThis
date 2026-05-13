@@ -1,14 +1,7 @@
 import { CompassIcon, HomeIcon, SparkleIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { SignIn } from "@clerk/nextjs";
-import {
-  ClerkProvider,
-  Show,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from "@clerk/nextjs";
+import { Show, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { Suspense } from "react";
 import CustomUserButton from "./custom-user-button";
 
@@ -26,7 +19,6 @@ const Logo = () => {
 };
 
 const Header = () => {
-  const isSignedIn = false;
   return (
     <header className="sticky top-0 z-50 border-b bg-background backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="wrapper px-12">
@@ -64,22 +56,9 @@ const Header = () => {
                   Submit Project
                 </Link>
               </Button>
-              {/* Clerk authentication */}
-              {/* <Button variant="ghost">
-                <UserIcon className="size-4" />
-              </Button> */}
               <CustomUserButton />
             </Show>
             </Suspense>
-            {/* {isSignedIn ? (
-              <></>
-            ) : (
-              <>
-                {" "}
-                <SignIn />
-                <SignUp />
-              </>
-            )} */}
           </div>
         </div>
       </div>
